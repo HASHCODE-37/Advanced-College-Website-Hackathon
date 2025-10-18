@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Pillai HOC College</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            background: var(--background);
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            background: var(--background);
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            margin-top: 2rem;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav a:hover {
+            background: var(--background);
+        }
+        
+        .sidebar-nav a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .admin-section {
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .section-content {
+            padding: 1.5rem;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: var(--background);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .badge-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div style="margin-bottom: 2rem;">
+                <div class="logo">
+                    <div class="logo-icon">P</div>
+                    <div class="logo-text">
+                        <h2 style="font-size: 1.25rem;">Admin Panel</h2>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary);">Pillai HOC College</p>
+                    </div>
+                </div>
+            </div>
+            
+            <ul class="sidebar-nav">
+                <li><a href="#dashboard" class="active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="#programs" onclick="showSection('programs')">
+                    <i class="fas fa-book"></i> Programs
+                </a></li>
+                <li><a href="#faculty" onclick="showSection('faculty')">
+                    <i class="fas fa-users"></i> Faculty
+                </a></li>
+                <li><a href="#events" onclick="showSection('events')">
+                    <i class="fas fa-calendar"></i> Events
+                </a></li>
+                <li><a href="#notices" onclick="showSection('notices')">
+                    <i class="fas fa-bullhorn"></i> Notices
+                </a></li>
+                <li><a href="#timetable" onclick="showSection('timetable')">
+                    <i class="fas fa-clock"></i> Timetable
+                </a></li>
+            </ul>
+
+            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                <button onclick="logout()" class="btn btn-outline" style="width: 100%;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="admin-section">
+                <div class="dashboard-header">
+                    <div>
+                        <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Dashboard</h1>
+                        <p style="color: var(--text-secondary);">Welcome to the admin panel</p>
+                    </div>
+                    <div>
+                        <a href="/" class="btn btn-outline">
+                            <i class="fas fa-external-link-alt"></i> View Website
+                        </a>
+                    </div>
+                </div>
+
+                <div class="section-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Total Programs</div>
+                            <div style="font-size: 2rem; font-weight: 700;" id="stats-programs">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Faculty Members</div>
+                            <div style="font-size: 2rem; font-weight: 700;" id="stats-faculty">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Upcoming Events</div>
+                            <div style="font-size: 2rem; font-weight: 700;" id="stats-events">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Active Notices</div>
+                            <div style="font-size: 2rem; font-weight: 700;" id="stats-notices">0</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <div class="section-header">
+                            <h2 style="font-size: 1.25rem; font-weight: 600;">Recent Activities</h2>
+                        </div>
+                        <div class="section-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Activity</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-activities">
+                                    <!-- Activities will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programs Section -->
+            <div id="programs-section" class="admin-section hidden">
+                <div class="section-header">
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Manage Programs</h2>
+                    <button class="btn btn-primary" onclick="showProgramForm()">
+                        <i class="fas fa-plus"></i> Add Program
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div id="program-form" class="hidden">
+                        <h3 style="margin-bottom: 1rem;">Add New Program</h3>
+                        <form id="programForm" onsubmit="saveProgram(event)">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Program Title</label>
+                                    <input type="text" class="form-input" name="title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Degree</label>
+                                    <input type="text" class="form-input" name="degree" required>
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Duration</label>
+                                    <input type="text" class="form-input" name="duration" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" name="category" required>
+                                        <option value="UG">Undergraduate</option>
+                                        <option value="PG">Postgraduate</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-textarea" name="description" required></textarea>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Faculty</label>
+                                    <select class="form-select" name="faculty" required>
+                                        <option value="Science">Science</option>
+                                        <option value="Commerce">Commerce</option>
+                                        <option value="Arts">Arts</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Image URL</label>
+                                    <input type="text" class="form-input" name="image">
+                                </div>
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">Save Program</button>
+                                <button type="button" class="btn btn-outline" onclick="hideProgramForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Program</th>
+                                <th>Degree</th>
+                                <th>Duration</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="programs-table">
+                            <!-- Programs will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Faculty Section -->
+            <div id="faculty-section" class="admin-section hidden">
+                <div class="section-header">
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Manage Faculty</h2>
+                    <button class="btn btn-primary" onclick="showFacultyForm()">
+                        <i class="fas fa-plus"></i> Add Faculty
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div id="faculty-form" class="hidden">
+                        <h3 style="margin-bottom: 1rem;">Add New Faculty</h3>
+                        <form id="facultyForm" onsubmit="saveFaculty(event)">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-input" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Designation</label>
+                                    <input type="text" class="form-input" name="designation" required>
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-input" name="department" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-input" name="email" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Qualifications (comma separated)</label>
+                                <input type="text" class="form-input" name="qualifications" placeholder="Ph.D., M.Tech, B.Sc.">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Image URL</label>
+                                <input type="text" class="form-input" name="image">
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">Save Faculty</button>
+                                <button type="button" class="btn btn-outline" onclick="hideFacultyForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Designation</th>
+                                <th>Department</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="faculty-table">
+                            <!-- Faculty will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Events Section -->
+            <div id="events-section" class="admin-section hidden">
+                <div class="section-header">
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Manage Events</h2>
+                    <button class="btn btn-primary" onclick="showEventForm()">
+                        <i class="fas fa-plus"></i> Add Event
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div id="event-form" class="hidden">
+                        <h3 style="margin-bottom: 1rem;">Add New Event</h3>
+                        <form id="eventForm" onsubmit="saveEvent(event)">
+                            <div class="form-group">
+                                <label class="form-label">Event Title</label>
+                                <input type="text" class="form-input" name="title" required>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-input" name="date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Time</label>
+                                    <input type="text" class="form-input" name="time" placeholder="10:00 AM - 5:00 PM" required>
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-input" name="location" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <input type="text" class="form-input" name="category" placeholder="Academic, Workshop, etc." required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-textarea" name="description" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Image URL</label>
+                                <input type="text" class="form-input" name="image">
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">Save Event</button>
+                                <button type="button" class="btn btn-outline" onclick="hideEventForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-table">
+                            <!-- Events will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Notices Section -->
+            <div id="notices-section" class="admin-section hidden">
+                <div class="section-header">
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Manage Notices</h2>
+                    <button class="btn btn-primary" onclick="showNoticeForm()">
+                        <i class="fas fa-plus"></i> Add Notice
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div id="notice-form" class="hidden">
+                        <h3 style="margin-bottom: 1rem;">Add New Notice</h3>
+                        <form id="noticeForm" onsubmit="saveNotice(event)">
+                            <div class="form-group">
+                                <label class="form-label">Notice Title</label>
+                                <input type="text" class="form-input" name="title" required>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-input" name="date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" name="category" required>
+                                        <option value="Examination">Examination</option>
+                                        <option value="Admission">Admission</option>
+                                        <option value="General">General</option>
+                                        <option value="Academic">Academic</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <input type="checkbox" name="isNew"> Mark as New
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">File URL (optional)</label>
+                                <input type="text" class="form-input" name="fileUrl">
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">Save Notice</button>
+                                <button type="button" class="btn btn-outline" onclick="hideNoticeForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Notice</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notices-table">
+                            <!-- Notices will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Timetable Section -->
+            <div id="timetable-section" class="admin-section hidden">
+                <div class="section-header">
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Manage Timetable</h2>
+                    <button class="btn btn-primary" onclick="showTimetableForm()">
+                        <i class="fas fa-plus"></i> Add Timetable
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div id="timetable-form" class="hidden">
+                        <h3 style="margin-bottom: 1rem;">Add New Timetable Notice</h3>
+                        <form id="timetableForm" onsubmit="saveTimetable(event)">
+                            <div class="form-group">
+                                <label class="form-label">Timetable Title</label>
+                                <input type="text" class="form-input" name="title" placeholder="Final Examination Timetable - Semester VI" required>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-input" name="date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">For Program/Class</label>
+                                    <input type="text" class="form-input" name="program" placeholder="B.Sc. Computer Science, Semester VI" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-textarea" name="description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">File URL</label>
+                                <input type="text" class="form-input" name="fileUrl" placeholder="/downloads/timetable.pdf" required>
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">Save Timetable</button>
+                                <button type="button" class="btn btn-outline" onclick="hideTimetableForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <p>Timetable notices will appear in the notices section. Use the notices section to manage them.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentData = {};
+        let editingId = null;
+
+        // Navigation
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(section + '-section').classList.remove('hidden');
+            
+            // Update active nav link
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Load data for section
+            if (section !== 'dashboard') {
+                loadSectionData(section);
+            }
+        }
+
+        // Load all data
+        async function loadData() {
+            try {
+                const response = await fetch('/api/admin/data');
+                currentData = await response.json();
+                updateDashboardStats();
+                loadRecentActivities();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showAlert('Error loading data', 'error');
+            }
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('stats-programs').textContent = currentData.programs.length;
+            document.getElementById('stats-faculty').textContent = currentData.faculty.length;
+            document.getElementById('stats-events').textContent = currentData.events.length;
+            document.getElementById('stats-notices').textContent = currentData.notices.length;
+        }
+
+        function loadRecentActivities() {
+            const activities = [];
+            
+            // Add recent notices
+            currentData.notices.slice(0, 3).forEach(notice => {
+                activities.push({
+                    activity: notice.title,
+                    type: 'Notice',
+                    date: notice.date,
+                    status: notice.isNew ? 'New' : 'Published'
+                });
+            });
+            
+            // Add recent events
+            currentData.events.slice(0, 2).forEach(event => {
+                activities.push({
+                    activity: event.title,
+                    type: 'Event',
+                    date: event.date,
+                    status: 'Upcoming'
+                });
+            });
+            
+            const tbody = document.getElementById('recent-activities');
+            tbody.innerHTML = activities.map(activity => `
+                <tr>
+                    <td>${activity.activity}</td>
+                    <td><span class="badge badge-primary">${activity.type}</span></td>
+                    <td>${activity.date}</td>
+                    <td><span class="badge badge-success">${activity.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Programs Management
+        function showProgramForm() {
+            document.getElementById('program-form').classList.remove('hidden');
+            document.getElementById('programForm').reset();
+            editingId = null;
+        }
+
+        function hideProgramForm() {
+            document.getElementById('program-form').classList.add('hidden');
+        }
+
+        async function saveProgram(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const url = editingId ? `/api/admin/programs/${editingId}` : '/api/admin/programs';
+                const method = editingId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Program saved successfully!', 'success');
+                    hideProgramForm();
+                    loadData();
+                    loadSectionData('programs');
+                } else {
+                    throw new Error('Failed to save program');
+                }
+            } catch (error) {
+                console.error('Error saving program:', error);
+                showAlert('Error saving program', 'error');
+            }
+        }
+
+        function loadSectionData(section) {
+            const data = currentData[section];
+            if (!data) return;
+            
+            const tbody = document.getElementById(section + '-table');
+            if (!tbody) return;
+            
+            switch(section) {
+                case 'programs':
+                    tbody.innerHTML = data.map(program => `
+                        <tr>
+                            <td>${program.title}</td>
+                            <td>${program.degree}</td>
+                            <td>${program.duration}</td>
+                            <td><span class="badge badge-primary">${program.category}</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline btn-sm" onclick="editProgram(${program.id})">Edit</button>
+                                    <button class="btn btn-outline btn-sm" onclick="deleteProgram(${program.id})" style="color: #ef4444;">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    break;
+                    
+                case 'faculty':
+                    tbody.innerHTML = data.map(faculty => `
+                        <tr>
+                            <td>${faculty.name}</td>
+                            <td>${faculty.designation}</td>
+                            <td>${faculty.department}</td>
+                            <td>${faculty.email}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline btn-sm" onclick="editFaculty(${faculty.id})">Edit</button>
+                                    <button class="btn btn-outline btn-sm" onclick="deleteFaculty(${faculty.id})" style="color: #ef4444;">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    break;
+                    
+                case 'events':
+                    tbody.innerHTML = data.map(event => `
+                        <tr>
+                            <td>${event.title}</td>
+                            <td>${event.date}</td>
+                            <td>${event.location}</td>
+                            <td><span class="badge badge-warning">${event.category}</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline btn-sm" onclick="editEvent(${event.id})">Edit</button>
+                                    <button class="btn btn-outline btn-sm" onclick="deleteEvent(${event.id})" style="color: #ef4444;">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    break;
+                    
+                case 'notices':
+                    tbody.innerHTML = data.map(notice => `
+                        <tr>
+                            <td>${notice.title}</td>
+                            <td>${notice.date}</td>
+                            <td><span class="badge badge-primary">${notice.category}</span></td>
+                            <td>${notice.isNew ? '<span class="badge badge-success">New</span>' : '<span class="badge">Published</span>'}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline btn-sm" onclick="editNotice(${notice.id})">Edit</button>
+                                    <button class="btn btn-outline btn-sm" onclick="deleteNotice(${notice.id})" style="color: #ef4444;">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    break;
+            }
+        }
+
+        // Edit functions
+        function editProgram(id) {
+            const program = currentData.programs.find(p => p.id === id);
+            if (program) {
+                const form = document.getElementById('programForm');
+                Object.keys(program).forEach(key => {
+                    if (form[key]) {
+                        form[key].value = program[key];
+                    }
+                });
+                showProgramForm();
+                editingId = id;
+            }
+        }
+
+        function editFaculty(id) {
+            const faculty = currentData.faculty.find(f => f.id === id);
+            if (faculty) {
+                const form = document.getElementById('facultyForm');
+                Object.keys(faculty).forEach(key => {
+                    if (form[key]) {
+                        if (key === 'qualifications' && Array.isArray(faculty[key])) {
+                            form[key].value = faculty[key].join(', ');
+                        } else {
+                            form[key].value = faculty[key];
+                        }
+                    }
+                });
+                showFacultyForm();
+                editingId = id;
+            }
+        }
+
+        function editEvent(id) {
+            const event = currentData.events.find(e => e.id === id);
+            if (event) {
+                const form = document.getElementById('eventForm');
+                Object.keys(event).forEach(key => {
+                    if (form[key]) {
+                        form[key].value = event[key];
+                    }
+                });
+                showEventForm();
+                editingId = id;
+            }
+        }
+
+        function editNotice(id) {
+            const notice = currentData.notices.find(n => n.id === id);
+            if (notice) {
+                const form = document.getElementById('noticeForm');
+                Object.keys(notice).forEach(key => {
+                    if (form[key]) {
+                        if (key === 'isNew') {
+                            form[key].checked = notice[key];
+                        } else {
+                            form[key].value = notice[key];
+                        }
+                    }
+                });
+                showNoticeForm();
+                editingId = id;
+            }
+        }
+
+        // Delete functions
+        async function deleteProgram(id) {
+            if (confirm('Are you sure you want to delete this program?')) {
+                try {
+                    const response = await fetch(`/api/admin/programs/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Program deleted successfully!', 'success');
+                        loadData();
+                        loadSectionData('programs');
+                    } else {
+                        throw new Error('Failed to delete program');
+                    }
+                } catch (error) {
+                    console.error('Error deleting program:', error);
+                    showAlert('Error deleting program', 'error');
+                }
+            }
+        }
+
+        async function deleteFaculty(id) {
+            if (confirm('Are you sure you want to delete this faculty member?')) {
+                try {
+                    const response = await fetch(`/api/admin/faculty/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Faculty member deleted successfully!', 'success');
+                        loadData();
+                        loadSectionData('faculty');
+                    } else {
+                        throw new Error('Failed to delete faculty');
+                    }
+                } catch (error) {
+                    console.error('Error deleting faculty:', error);
+                    showAlert('Error deleting faculty member', 'error');
+                }
+            }
+        }
+
+        async function deleteEvent(id) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                try {
+                    const response = await fetch(`/api/admin/events/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Event deleted successfully!', 'success');
+                        loadData();
+                        loadSectionData('events');
+                    } else {
+                        throw new Error('Failed to delete event');
+                    }
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    showAlert('Error deleting event', 'error');
+                }
+            }
+        }
+
+        async function deleteNotice(id) {
+            if (confirm('Are you sure you want to delete this notice?')) {
+                try {
+                    const response = await fetch(`/api/admin/notices/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Notice deleted successfully!', 'success');
+                        loadData();
+                        loadSectionData('notices');
+                    } else {
+                        throw new Error('Failed to delete notice');
+                    }
+                } catch (error) {
+                    console.error('Error deleting notice:', error);
+                    showAlert('Error deleting notice', 'error');
+                }
+            }
+        }
+
+        // Faculty Management
+        function showFacultyForm() {
+            document.getElementById('faculty-form').classList.remove('hidden');
+            document.getElementById('facultyForm').reset();
+            editingId = null;
+        }
+
+        function hideFacultyForm() {
+            document.getElementById('faculty-form').classList.add('hidden');
+        }
+
+        async function saveFaculty(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // Process qualifications
+            if (data.qualifications) {
+                data.qualifications = data.qualifications.split(',').map(q => q.trim());
+            }
+            
+            try {
+                const url = editingId ? `/api/admin/faculty/${editingId}` : '/api/admin/faculty';
+                const method = editingId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Faculty member saved successfully!', 'success');
+                    hideFacultyForm();
+                    loadData();
+                    loadSectionData('faculty');
+                } else {
+                    throw new Error('Failed to save faculty member');
+                }
+            } catch (error) {
+                console.error('Error saving faculty member:', error);
+                showAlert('Error saving faculty member', 'error');
+            }
+        }
+
+        // Events Management
+        function showEventForm() {
+            document.getElementById('event-form').classList.remove('hidden');
+            document.getElementById('eventForm').reset();
+            editingId = null;
+        }
+
+        function hideEventForm() {
+            document.getElementById('event-form').classList.add('hidden');
+        }
+
+        async function saveEvent(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const url = editingId ? `/api/admin/events/${editingId}` : '/api/admin/events';
+                const method = editingId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Event saved successfully!', 'success');
+                    hideEventForm();
+                    loadData();
+                    loadSectionData('events');
+                } else {
+                    throw new Error('Failed to save event');
+                }
+            } catch (error) {
+                console.error('Error saving event:', error);
+                showAlert('Error saving event', 'error');
+            }
+        }
+
+        // Notices Management
+        function showNoticeForm() {
+            document.getElementById('notice-form').classList.remove('hidden');
+            document.getElementById('noticeForm').reset();
+            editingId = null;
+        }
+
+        function hideNoticeForm() {
+            document.getElementById('notice-form').classList.add('hidden');
+        }
+
+        async function saveNotice(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            data.isNew = data.isNew === 'on';
+            
+            try {
+                const url = editingId ? `/api/admin/notices/${editingId}` : '/api/admin/notices';
+                const method = editingId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Notice saved successfully!', 'success');
+                    hideNoticeForm();
+                    loadData();
+                    loadSectionData('notices');
+                } else {
+                    throw new Error('Failed to save notice');
+                }
+            } catch (error) {
+                console.error('Error saving notice:', error);
+                showAlert('Error saving notice', 'error');
+            }
+        }
+
+        // Timetable Management
+        function showTimetableForm() {
+            document.getElementById('timetable-form').classList.remove('hidden');
+            document.getElementById('timetableForm').reset();
+        }
+
+        function hideTimetableForm() {
+            document.getElementById('timetable-form').classList.add('hidden');
+        }
+
+        async function saveTimetable(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // Create a notice for the timetable
+            const noticeData = {
+                title: data.title,
+                date: data.date,
+                category: 'Examination',
+                description: data.description,
+                fileUrl: data.fileUrl,
+                isNew: true
+            };
+            
+            try {
+                const response = await fetch('/api/admin/notices', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(noticeData)
+                });
+                
+                if (response.ok) {
+                    showAlert('Timetable notice saved successfully!', 'success');
+                    hideTimetableForm();
+                    loadData();
+                } else {
+                    throw new Error('Failed to save timetable notice');
+                }
+            } catch (error) {
+                console.error('Error saving timetable notice:', error);
+                showAlert('Error saving timetable notice', 'error');
+            }
+        }
+
+        // Utility functions
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(alert, mainContent.firstChild);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/admin/logout';
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+    </script>
+</body>
+</html>
