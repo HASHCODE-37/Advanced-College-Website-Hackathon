@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Programs - Pillai HOC College</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .programs-hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .programs-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .programs-hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .faculty-section {
+            padding: 4rem 0;
+        }
+        
+        .faculty-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .faculty-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .faculty-header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+        
+        .programs-table {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+        
+        .programs-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .programs-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .programs-table td {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        
+        .program-category {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .program-name {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .program-duration {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .program-code {
+            background: var(--background);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .apply-btn {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: inline-block;
+        }
+        
+        .apply-btn:hover {
+            background: #ea580c;
+        }
+        
+        .program-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .highlight-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        
+        .highlight-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .highlight-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .highlight-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            border-radius: 0.5rem;
+            margin: 4rem 0;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .programs-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .programs-hero p {
+                font-size: 1rem;
+            }
+            
+            .faculty-header h2 {
+                font-size: 2rem;
+            }
+            
+            .programs-table {
+                overflow-x: auto;
+            }
+            
+            .programs-table table {
+                min-width: 600px;
+            }
+            
+            .cta-section h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Quick Contact Bar -->
+    <div class="quick-contact-bar">
+        <div class="container">
+            <div class="quick-contact-content">
+                <div class="quick-contact-left">
+                    <span><i class="fas fa-phone"></i> +91 22 2745 xxxx</span>
+                    <span><i class="fas fa-envelope"></i> info@phcasc.ac.in</span>
+                </div>
+                <div class="quick-contact-right">
+                    <a href="https://www.facebook.com/pillaihoccollege/"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/PillaiOf"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/pillaihoccollege/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://in.linkedin.com/company/phcasc"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.youtube.com/user/pillaigrouponline"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/college-logo.png') }}" alt="Pillai HOC College Logo" class="logo-image">
+                </div>
+                <div class="logo-text">
+                    <h1>Pillai HOC College</h1>
+                    <p>Arts, Science & Commerce, Rasayani</p>
+                </div>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/#about">About</a></li>
+                <li><a href="/programs" class="active">Programs</a></li>
+                <li><a href="/#faculty">Faculty</a></li>
+                <li><a href="/#research">Research</a></li>
+                <li><a href="/#placements">Placements</a></li>
+                <li><a href="/#events">Events</a></li>
+                <li><a href="/#contact">Contact</a></li>
+                <li><a href="/admin" class="btn btn-primary">Admin Login</a></li>
+            </ul>
+            
+            <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <!-- Programs Hero Section -->
+    <section class="programs-hero">
+        <div class="container">
+            <h1>Academic Programs</h1>
+            <p>Explore our comprehensive range of undergraduate and postgraduate programs across Arts, Science, and Commerce faculties</p>
+        </div>
+    </section>
+
+    <!-- Arts Programs -->
+    <section class="faculty-section">
+        <div class="container">
+            <div class="faculty-header">
+                <h2>PROGRAMMES OF ARTS</h2>
+                <p>Developing creative thinkers and effective communicators</p>
+            </div>
+            
+            <div class="programs-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Program Name</th>
+                            <th>Duration</th>
+                            <th>Eligibility</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Arts (B.A.)</div>
+                                <div class="program-duration">Specializations: English, History, Economics</div>
+                                <div class="program-code">Code: BA-GEN</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 in any stream</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Multimedia and Mass Communication (B.A.M.M.C.)</div>
+                                <div class="program-duration">Media Studies & Communication</div>
+                                <div class="program-code">Code: BAMMC</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 in any stream</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Science Programs -->
+    <section class="faculty-section bg-muted">
+        <div class="container">
+            <div class="faculty-header">
+                <h2>PROGRAMMES OF SCIENCE</h2>
+                <p>Fostering innovation and scientific excellence</p>
+            </div>
+            
+            <div class="programs-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="4" style="text-align: center; background: var(--secondary-color);">BACHELOR PROGRAMS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Science in Information Technology (B.Sc.I.T.)</div>
+                                <div class="program-duration">Software Development & IT Management</div>
+                                <div class="program-code">Code: BSCIT</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 with Mathematics</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Science in Computer Science (B.Sc.C.S.)</div>
+                                <div class="program-duration">Computer Systems & Programming</div>
+                                <div class="program-code">Code: BSCSC</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 with Mathematics</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Science (Physics, Chemistry, Mathematics)</div>
+                                <div class="program-duration">PCM Combination</div>
+                                <div class="program-code">Code: BSC-PCM</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 with Science</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Science in Data Science (B.Sc.D.S.)</div>
+                                <div class="program-duration">Data Analytics & Machine Learning</div>
+                                <div class="program-code">Code: BSCDS</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 with Mathematics</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Science in Hospitality Studies (B.Sc.H.S.)</div>
+                                <div class="program-duration">Hotel Management & Tourism</div>
+                                <div class="program-code">Code: BSCHS</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 in any stream</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="programs-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="4" style="text-align: center; background: var(--secondary-color);">MASTER PROGRAMS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="program-name">Master of Science in Information Technology (M.Sc.I.T.)</div>
+                                <div class="program-duration">Advanced IT Specializations</div>
+                                <div class="program-code">Code: MSCIT</div>
+                            </td>
+                            <td>2 Years</td>
+                            <td>B.Sc. IT/CS or equivalent</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Master of Science in Organic Chemistry (M.Sc.O.C.)</div>
+                                <div class="program-duration">Chemical Research & Analysis</div>
+                                <div class="program-code">Code: MSCOC</div>
+                            </td>
+                            <td>2 Years</td>
+                            <td>B.Sc. Chemistry or equivalent</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commerce Programs -->
+    <section class="faculty-section">
+        <div class="container">
+            <div class="faculty-header">
+                <h2>PROGRAMMES OF COMMERCE</h2>
+                <p>Shaping future business leaders and financial experts</p>
+            </div>
+            
+            <div class="programs-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="4" style="text-align: center; background: var(--secondary-color);">BACHELOR PROGRAMS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Commerce (B.Com.)</div>
+                                <div class="program-duration">General Commerce Program</div>
+                                <div class="program-code">Code: BCOM</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 in any stream</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Commerce in Accounting and Finance (B.Com.A&F)</div>
+                                <div class="program-duration">Specialization in Accounts & Finance</div>
+                                <div class="program-code">Code: BCOMAF</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 in Commerce/Science</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="program-name">Bachelor of Management Studies (B.M.S.)</div>
+                                <div class="program-duration">Business Management & Administration</div>
+                                <div class="program-code">Code: BMS</div>
+                            </td>
+                            <td>3 Years</td>
+                            <td>10+2 in any stream</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="programs-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="4" style="text-align: center; background: var(--secondary-color);">MASTER PROGRAMS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="program-name">Master of Commerce (M.Com.)</div>
+                                <div class="program-duration">Advanced Accountancy Specialization</div>
+                                <div class="program-code">Code: MCOM</div>
+                            </td>
+                            <td>2 Years</td>
+                            <td>B.Com. or equivalent</td>
+                            <td><a href="/#contact" class="apply-btn">Apply Now</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Program Highlights -->
+    <section class="faculty-section bg-muted">
+        <div class="container">
+            <div class="faculty-header">
+                <h2>Why Choose Our Programs?</h2>
+                <p>Excellence in education with industry-relevant curriculum</p>
+            </div>
+            
+            <div class="program-highlights">
+                <div class="highlight-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Industry-Relevant Curriculum</h3>
+                    <p>Updated syllabus aligned with current industry requirements and trends</p>
+                </div>
+                <div class="highlight-card">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Excellent Placements</h3>
+                    <p>92% placement rate with top companies across all programs</p>
+                </div>
+                <div class="highlight-card">
+                    <i class="fas fa-flask"></i>
+                    <h3>Modern Infrastructure</h3>
+                    <p>State-of-the-art labs, libraries, and smart classrooms</p>
+                </div>
+                <div class="highlight-card">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h3>Expert Faculty</h3>
+                    <p>Highly qualified and experienced teaching professionals</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="container">
+        <div class="cta-section">
+            <h2>Ready to Start Your Journey?</h2>
+            <p>Join thousands of successful alumni who started their careers at Pillai HOC College</p>
+            <div class="hero-buttons">
+                <a href="#admissions" class="btn btn-primary" style="background: white; color: var(--primary-color);">Download Brochure</a>
+                <a href="#apply" class="btn btn-outline" style="background: transparent; color: white; border-color: white;">Apply Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo" style="margin-bottom: 1rem;">
+                        <div class="logo-icon">
+                            <img src="{{ url_for('static', filename='images/college-logo.png') }}" alt="Pillai HOC College Logo" class="logo-image">
+                        </div>
+                        <div class="logo-text">
+                            <h3>Pillai HOC College</h3>
+                            <p>Arts, Science & Commerce</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">NAAC A++ accredited institution dedicated to excellence in education.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/pillaihoccollege/"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/PillaiOf"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/pillaihoccollege/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://in.linkedin.com/company/phcasc"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.youtube.com/user/pillaigrouponline"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Academics</h4>
+                    <ul>
+                        <li><a href="/programs?level=ug">Undergraduate</a></li>
+                        <li><a href="/programs?level=pg">Postgraduate</a></li>
+                        <li><a href="/research">Research</a></li>
+                        <li><a href="/syllabus">Syllabus</a></li>
+                        <li><a href="/timetable">Time Table</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/admissions">Admissions</a></li>
+                        <li><a href="/faculty">Faculty</a></li>
+                        <li><a href="/placements">Placements</a></li>
+                        <li><a href="/library">Library</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/downloads">Downloads</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/alumni">Alumni</a></li>
+                        <li><a href="/anti-ragging">Anti Ragging</a></li>
+                        <li><a href="/grievance">Grievance Redressal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Pillai HOC College. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

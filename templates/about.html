@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Faculty - Pillai HOC College</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --background: #f9fafb;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark {
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --background: #111827;
+            --card-bg: #1f2937;
+            --border-color: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            padding: 3rem 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Quick Contact Bar */
+        .quick-contact-bar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+
+        .quick-contact-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-contact-left span {
+            margin-right: 1.5rem;
+        }
+
+        .quick-contact-left i, .quick-contact-right i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .quick-contact-right a {
+            margin-left: 1rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .quick-contact-right a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-icon {
+            width: 3rem;
+            height: 3rem;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-image {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .logo-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        /* Faculty Hero Section */
+        .faculty-hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .faculty-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .faculty-hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .faculty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .faculty-card {
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .faculty-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .faculty-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .faculty-designation {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .faculty-department {
+            background: var(--background);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .faculty-qualifications {
+            margin-bottom: 1rem;
+        }
+        
+        .qualification-tag {
+            background: var(--background);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            border: 1px solid var(--border-color);
+        }
+        
+        .faculty-email {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+        
+        .faculty-email i {
+            margin-right: 0.5rem;
+        }
+        
+        .department-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        #faculty-search {
+            width: 100%; 
+            padding: 0.75rem 1rem 0.75rem 3rem; 
+            border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; 
+            background: var(--card-bg); 
+            color: var(--text-primary);
+        }
+
+        #faculty-search:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer h4 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .footer ul {
+            list-style: none;
+        }
+
+        .footer ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer ul li a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .footer ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--background);
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .footer-bottom a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover {
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .faculty-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .faculty-hero p {
+                font-size: 1rem;
+            }
+            
+            .faculty-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .department-filters {
+                gap: 0.5rem;
+            }
+            
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--card-bg);
+                flex-direction: column;
+                padding: 1rem 0;
+                box-shadow: var(--shadow);
+            }
+            
+            .nav-links.show {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .quick-contact-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .quick-contact-left {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .quick-contact-left span {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Quick Contact Bar -->
+    <div class="quick-contact-bar">
+        <div class="container">
+            <div class="quick-contact-content">
+                <div class="quick-contact-left">
+                    <span><i class="fas fa-phone"></i> +91 22 2745 xxxx</span>
+                    <span><i class="fas fa-envelope"></i> info@phcasc.ac.in</span>
+                </div>
+                <div class="quick-contact-right">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/college-logo.png') }}" alt="Pillai HOC College Logo" class="logo-image">
+                </div>
+                <div class="logo-text">
+                    <h1>Pillai HOC College</h1>
+                    <p>Arts, Science & Commerce, Rasayani</p>
+                </div>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/#about">About</a></li>
+                <li><a href="/programs">Programs</a></li>
+                <li><a href="/faculty" class="active">Faculty</a></li>
+                <li><a href="/#research">Research</a></li>
+                <li><a href="/#placements">Placements</a></li>
+                <li><a href="/#events">Events</a></li>
+                <li><a href="/#contact">Contact</a></li>
+                <li><a href="/admin" class="btn btn-primary">Admin Login</a></li>
+            </ul>
+            
+            <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <!-- Faculty Hero Section -->
+    <section class="faculty-hero">
+        <div class="container">
+            <h1>Our Distinguished Faculty</h1>
+            <p>Meet our experienced and qualified faculty members dedicated to academic excellence</p>
+        </div>
+    </section>
+
+    <!-- Faculty Department Filters -->
+    <section class="section">
+        <div class="container">
+            <div class="department-filters">
+                <button class="filter-btn active" data-department="all">All Faculty</button>
+                <button class="filter-btn" data-department="ARTS">Arts Faculty</button>
+                <button class="filter-btn" data-department="SCIENCE">Science Faculty</button>
+                <button class="filter-btn" data-department="COMMERCE">Commerce Faculty</button>
+                <button class="filter-btn" data-department="PHCASC">Leadership</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div class="search-container" style="max-width: 500px; margin: 0 auto;">
+                <div style="position: relative;">
+                    <input type="text" id="faculty-search" placeholder="Search faculty by name, department, or qualification...">
+                    <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); 
+                         color: var(--text-secondary);"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Faculty Grid -->
+    <section class="section">
+        <div class="container">
+            <div id="faculty-container" class="faculty-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading faculty data...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo" style="margin-bottom: 1rem;">
+                        <div class="logo-icon">
+                            <img src="{{ url_for('static', filename='images/college-logo.png') }}" alt="Pillai HOC College Logo" class="logo-image">
+                        </div>
+                        <div class="logo-text">
+                            <h3>Pillai HOC College</h3>
+                            <p>Arts, Science & Commerce</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">NAAC A++ accredited institution dedicated to excellence in education.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Academics</h4>
+                    <ul>
+                        <li><a href="/programs?level=ug">Undergraduate</a></li>
+                        <li><a href="/programs?level=pg">Postgraduate</a></li>
+                        <li><a href="/research">Research</a></li>
+                        <li><a href="/syllabus">Syllabus</a></li>
+                        <li><a href="/timetable">Time Table</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/admissions">Admissions</a></li>
+                        <li><a href="/faculty">Faculty</a></li>
+                        <li><a href="/placements">Placements</a></li>
+                        <li><a href="/library">Library</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/downloads">Downloads</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/alumni">Alumni</a></li>
+                        <li><a href="/anti-ragging">Anti Ragging</a></li>
+                        <li><a href="/grievance">Grievance Redressal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Pillai HOC College. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Faculty data - specific to faculty page
+        const facultyData = [
+            // Leadership
+            {'name': 'MR. BINIT KUMAR', 'designation': 'VICE-PRINCIPAL', 'department': 'COMMERCE', 'qualifications': ['UGC-NET', 'MIBA', 'B.A-HONS-ECONOMICS'], 'email': 'binitk@mes.ac.in'},
+            {'name': 'MS. NAVNEET SANDHU', 'designation': 'LIBRARIAN', 'department': 'PHCASC', 'qualifications': ['NET', 'M.PHIL', 'M.LIB', 'B.LIB', 'B.COM.'], 'email': 'navneets@mes.ac.in'},
+            
+            // Arts Faculty (all 12 members)
+            {'name': 'MR. SUJITH BABU', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['UGC-NET', 'M.A-ENGLISH', 'B.A-ENGLISH'], 'email': 'sujithb@mes.ac.in'},
+            {'name': 'MS. PALLAVI SHANTANU PATIL', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['MA-ENGLISH', 'BA-ENGLISH', 'SET-ENGLISH'], 'email': 'pallavip@mes.ac.in'},
+            {'name': 'MS. KALAVATI UPADHYAY', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['M.A-ECONOMICS', 'B.A-ECONOMICS'], 'email': 'kalavatiu@mes.ac.in'},
+            {'name': 'MS. DISHA CHOTALIYA', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['MJMC', 'B.ED', 'B.M.M.'], 'email': 'dishac@mes.ac.in'},
+            {'name': 'MS. RACHANA CHORAGHE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['SET-ECO', 'M.A-ECONOMICS'], 'email': 'rachanac@mes.ac.in'},
+            {'name': 'MR. PRATHAMESH C. GOKHALE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['M.A-MASS COMMUNICATION', 'B.A-POLITICAL SCIENCE', 'B.M.M.'], 'email': 'prathameshg@mes.ac.in'},
+            {'name': 'MR. KEEKAN PRIYESH RAGHAVAN', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['LLB', 'MA-ENGLISH', 'BA-ENGLISH'], 'email': 'keekanr@mes.ac.in'},
+            {'name': 'MR. LINU GEORGE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['MA-ENGLISH', 'BA-ENGLISH'], 'email': 'linug@mes.ac.in'},
+            {'name': 'MS. SERAPHIN AMANNA', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['M.A-MASS COMMUNICATION & JOURNALISM'], 'email': 'seraphina@mes.ac.in'},
+            {'name': 'MR. AVINASH KUNJU', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['MA-FILM & TELEVISION'], 'email': 'avinashk@mes.ac.in'},
+            {'name': 'MS. SAHIMA S.', 'designation': 'ASSISTANT PROFESSOR', 'department': 'ARTS', 'qualifications': ['M.A', 'NET-SET'], 'email': 'sahimas@mes.ac.in'},
+            
+            // Science Faculty (all 25 members)
+            {'name': 'DR. JAYANTA KUMAR BEHRA', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['PH.D', 'M.SC-PHYSICS', 'B.SC-PHYSICS'], 'email': 'jayantab@mes.ac.in'},
+            {'name': 'DR. VISHAKHA P. BODADE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['PH.D', 'M.SC-PHYSICAL CHEMISTRY', 'B.SC-PHYSICAL CHEMISTRY'], 'email': 'vishakhab@mes.ac.in'},
+            {'name': 'DR. SAPANA CHILATE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['PH.D', 'M.SC-CHEMISTRY', 'B.SC-CHEMISTRY'], 'email': 'sapanac@mes.ac.in'},
+            {'name': 'DR. ARCHANA ASHOK BHAGWAT', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['PH.D', 'SET', 'M.SC-ORGANIC CHEMISTRY', 'B.SC-CHEMISTRY'], 'email': 'archanab@mes.ac.in'},
+            {'name': 'MS. PRIYANKA R. SORTE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['SET-COMPUTER SCIENCE & APPLICATION', 'M.SC-COMPUTER SCIENCE', 'B.SC-COMPUTER SCIENCE'], 'email': 'priyankas@mes.ac.in'},
+            {'name': 'MS. NEETHUMOL K.G.', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-MATHEMATICS', 'B.ED.', 'B.SC- MATHEMATICS'], 'email': 'neethumolk@mes.ac.in'},
+            {'name': 'MR. RAVI BARI', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-MATHEMATICS', 'B.SC-MATHEMATICS'], 'email': 'ravib@mes.ac.in'},
+            {'name': 'MS. PRIYA PRAKASH', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-MATHEMATICS', 'B.ED', 'B.SC-MATHEMATICS'], 'email': 'priyap@mes.ac.in'},
+            {'name': 'MS. SULABHA NANDESHWAR', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-IT', 'B.SC-IT'], 'email': 'sulabhan@mes.ac.in'},
+            {'name': 'MS. ANITA NILESH MHATRE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['MCA', 'BSC-CS'], 'email': 'anitam@mes.ac.in'},
+            {'name': 'MS. SONAM JANGAM', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['ME-COMPUTER'], 'email': 'sonamj@mes.ac.in'},
+            {'name': 'MR. PAWAN AJAY GOSAVI', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-IT'], 'email': 'pawang@mes.ac.in'},
+            {'name': 'MR. SADIQ SHAIKH', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-IT'], 'email': 'sadiqs@mes.ac.in'},
+            {'name': 'MS. PRAGATI PHERWANI', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.Sc Physics'], 'email': 'pragatip@mes.ac.in'},
+            {'name': 'MS. PRIYA PADAVE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['MTM', 'DEP. HMCT'], 'email': 'priyap@mes.ac.in'},
+            {'name': 'MS. AKANKSHA RAWAT', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-MATHS'], 'email': 'akankshar@mes.ac.in'},
+            {'name': 'MS. KRANTI VARTAK', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-IT'], 'email': 'krantiv@mes.ac.in'},
+            {'name': 'MR. SHREEJITH NAIR', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-IT'], 'email': 'shreejithn@mes.ac.in'},
+            {'name': 'MR. SUSMIT KHEDKAR', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-HOSPITALITY & TOURISM MGMT'], 'email': 'susmitk@mes.ac.in'},
+            {'name': 'MS. KOMAL AMAR MAHINDRAKAR', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.SC-IT'], 'email': 'komalm@mes.ac.in'},
+            {'name': 'MS. SHRIKALA SAWANT', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['PGDM-MBA-HR'], 'email': 'shrikalas@mes.ac.in'},
+            {'name': 'MS. VARSHA S. SIVAN', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['M.Sc.', 'B.Ed.'], 'email': 'varshas@mes.ac.in'},
+            {'name': 'MS. MANALI YATISH', 'designation': 'ASSISTANT PROFESSOR', 'department': 'SCIENCE', 'qualifications': ['MBA'], 'email': 'manaliy@mes.ac.in'},
+            
+            // Commerce Faculty (all 18 members)
+            {'name': 'DR. BABITA PANDA', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['PH-D - ECONOMICS', 'M.PHIL', 'MA-ECONOMICS', 'BA-ECONOMICS'], 'email': 'babitap@mes.ac.in'},
+            {'name': 'MS. REWATI V. SOMAN', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['UGC-NET', 'PGDM', 'B.ED.', 'M.COM.', 'B.COM.'], 'email': 'rewatis@mes.ac.in'},
+            {'name': 'MS. REMYA MADANGOPAL', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['GATE', 'UGC-CSIR .NET', 'M.SC-BOTANY', 'B.SC-BOTANY'], 'email': 'remyam@mes.ac.in'},
+            {'name': 'MR. SUMEET A. MHATRE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['MMS-FINANCE', 'B.COM.'], 'email': 'sumeetm@mes.ac.in'},
+            {'name': 'MR. VINEET MURLI', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['SET-MANAGEMENT', 'MMS-HR', 'B.COM.'], 'email': 'vineetm@mes.ac.in'},
+            {'name': 'MS. HARSHITA P. SINGH', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.SC-MATHEMATICS', 'B.ED', 'B.SC-MATHEMATICS'], 'email': 'harshitas@mes.ac.in'},
+            {'name': 'MS. SHREEJA JOJI', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['PGDM', 'M.COM.', 'B.COM.'], 'email': 'shreejaj@mes.ac.in'},
+            {'name': 'MR. HARDIK DAVE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.COM.', 'B.ED.', 'B.COM-A&F'], 'email': 'hardikd@mes.ac.in'},
+            {'name': 'MS. ARUSHI DUBE', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.COM.', 'B.COM-A&F'], 'email': 'arushid@mes.ac.in'},
+            {'name': 'MS. PAULAMI RAO', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.COM.'], 'email': 'paulami@mes.ac.in'},
+            {'name': 'MS. NISHITA TOTLA', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['LLB', 'M.COM.'], 'email': 'nishitat@mes.ac.in'},
+            {'name': 'MS. ADITI MOHOLKAR', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.COM.'], 'email': 'aditim@mes.ac.in'},
+            {'name': 'MS. SHARADHA KADAM', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.COM.', 'NET-Commerce'], 'email': 'sharadhak@mes.ac.in'},
+            {'name': 'MS. SHEETAL PATARIYA', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.ED.', 'M.COM.', 'NET - COMMERCE', 'SET COMMERCE'], 'email': 'sheetalp@mes.ac.in'},
+            {'name': 'DR. AMIT VERMA', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['PHD', 'M.COM.', 'B.COM.'], 'email': 'amitv@mes.ac.in'},
+            {'name': 'MS. SWETA ROY CHAUDHARY', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['M.COM.', 'B.COM.'], 'email': 'swetar@mes.ac.in'},
+            {'name': 'MS. SINDHUJA JOSHI', 'designation': 'ASSISTANT PROFESSOR', 'department': 'COMMERCE', 'qualifications': ['MBA', 'B.COM', 'NET-COMMERCE'], 'email': 'sindhujaj@mes.ac.in'}
+        ];
+        
+        function renderFaculty(department = 'all') {
+            const container = document.getElementById('faculty-container');
+            const filteredFaculty = department === 'all' 
+                ? facultyData 
+                : facultyData.filter(f => f.department === department);
+            
+            if (filteredFaculty.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3>No faculty members found</h3>
+                        <p>No faculty members found for the selected department.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredFaculty.map(member => `
+                <div class="faculty-card">
+                    <div class="faculty-name">${member.name}</div>
+                    <div class="faculty-designation">${member.designation}</div>
+                    <div class="faculty-department">${member.department}</div>
+                    
+                    <div class="faculty-qualifications">
+                        ${member.qualifications.map(q => `
+                            <span class="qualification-tag">${q}</span>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="faculty-email">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:${member.email}">${member.email}</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function initSearch() {
+            const searchInput = document.getElementById('faculty-search');
+            
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                
+                if (searchTerm === '') {
+                    const activeFilter = document.querySelector('.filter-btn.active');
+                    renderFaculty(activeFilter.dataset.department);
+                    return;
+                }
+                
+                const activeFilter = document.querySelector('.filter-btn.active');
+                const filteredByDepartment = activeFilter.dataset.department === 'all' 
+                    ? facultyData 
+                    : facultyData.filter(f => f.department === activeFilter.dataset.department);
+                
+                const searchResults = filteredByDepartment.filter(member => 
+                    member.name.toLowerCase().includes(searchTerm) ||
+                    member.designation.toLowerCase().includes(searchTerm) ||
+                    member.department.toLowerCase().includes(searchTerm) ||
+                    member.qualifications.some(qual => qual.toLowerCase().includes(searchTerm)) ||
+                    member.email.toLowerCase().includes(searchTerm)
+                );
+                
+                renderSearchResults(searchResults, searchTerm);
+            });
+        }
+        
+        function renderSearchResults(results, searchTerm) {
+            const container = document.getElementById('faculty-container');
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3>No faculty members found</h3>
+                        <p>No results found for "${searchTerm}". Try searching with different keywords.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = results.map(member => `
+                <div class="faculty-card">
+                    <div class="faculty-name">${member.name}</div>
+                    <div class="faculty-designation">${member.designation}</div>
+                    <div class="faculty-department">${member.department}</div>
+                    
+                    <div class="faculty-qualifications">
+                        ${member.qualifications.map(q => `
+                            <span class="qualification-tag">${q}</span>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="faculty-email">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:${member.email}">${member.email}</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Theme Toggle Functionality
+        function initTheme() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            
+            document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+            updateThemeIcon(currentTheme);
+            
+            themeToggle?.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                const newTheme = isDark ? 'dark' : 'light';
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+        }
+
+        function updateThemeIcon(theme) {
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.innerHTML = theme === 'dark' 
+                    ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+                    : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+            }
+        }
+
+        // Mobile Menu Functionality
+        function initMobileMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            
+            mobileBtn?.addEventListener('click', () => {
+                navLinks?.classList.toggle('show');
+            });
+        }
+
+        // Faculty page specific initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            initTheme();
+            
+            // Initialize mobile menu
+            initMobileMenu();
+            
+            // Initialize faculty display
+            renderFaculty();
+            
+            // Initialize search
+            initSearch();
+            
+            // Add filter functionality
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderFaculty(btn.dataset.department);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
